@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body style="text-align: center; background-color: rgb(238, 144, 160);">
+    <div style="max-width: 600px; margin-top: 105px; margin: auto; background-color: rgb(230, 116, 116);" class="mt-4 card p-3 shadow border-0">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 style="color: rgb(0, 0, 0);" class="mt-3 mb-4">Movie Search App</h1>
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="movieTitle" placeholder="Movie Title">
+                    <label for="movieTitle">Enter Movie Title</label>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button style="width: 100%;" onclick="searchMovie()" type="button" class="btn btn-primary mt-md-3">Search Movie</button>
+            </div>
+        </div>
+        <div style="text-align: left;" class="mt-3" id="movieInfo"></div>
+    </div>
+
+    <script>
+        async function searchMovie() {
+            try {
+                const movieTitle = document.getElementById('movieTitle').value;
+                const response = await fetch(`http://www.omdbapi.com/?t=${encodeURIComponent(movieTitle)}&apikey=ecf822ed`);
+                const movieData = await response.json();
+                console.log(movieData);
+
+                if (movieData.Response === 'True') {
+                    document.getElementById('movieInfo').innerHTML = `
+                        <b style="font-size: 2em;">${movieData.Title} (${movieData.Year})</b><br><br>
+                        <b>Plot:</b> ${movieData.Plot}<br><br>
+                        <b>Director:</b> ${movieData.Director}<br><br>
+                        <b>Actors:</b> ${movieData.Actors}<br><br>
+                        <b>Ratings:</b> ${movieData.Ratings.map(rating => `${rating.Source}: ${rating.Value}`).join('<br>')}
+                    `;
+                } else {
+                    document.getElementById('movieInfo').innerHTML = '<b>Movie not found</b>';
+                }
+            } catch (error) {
+                console.error("ERROR:", error);
+                throw error;
+            }
+        }
+    </script>
+</body>
+</html>
